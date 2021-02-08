@@ -1,5 +1,6 @@
 package com.devkor_decuple.PanderaBox;
 
+import com.devkor_decuple.PanderaBox.Core.Games.YootnoriManager;
 import com.devkor_decuple.PanderaBox.Core.ReadFile;
 import com.devkor_decuple.PanderaBox.Listeners.YootnoriListener;
 import net.dv8tion.jda.api.JDABuilder;
@@ -12,9 +13,11 @@ import javax.security.auth.login.LoginException;
 
 public class PanderaBox {
 
+    public static YootnoriManager manager1 = new YootnoriManager();
+
     public static void main(String[] args) throws LoginException, InterruptedException {
 
-        JDABuilder.createDefault(ReadFile.readString(System.getProperty("user.dir")) + "/config.txt")
+        JDABuilder.createDefault(ReadFile.readString(System.getProperty("user.dir") + "/config.txt"))
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS,
