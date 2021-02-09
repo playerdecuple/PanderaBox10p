@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Yootnori {
 
+    private String channelId;
+
     private final List<User> userList = new ArrayList<>();
     private final List<Integer> yoots = new ArrayList<>();
 
@@ -14,6 +16,14 @@ public class Yootnori {
     private int remainingRedTeamMoveTurn = 0;
 
     public Yootnori() {
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
     public List<User> getUserList() {
@@ -30,6 +40,10 @@ public class Yootnori {
 
     public int getRemainingRedTeamMoveTurn() {
         return remainingRedTeamMoveTurn;
+    }
+
+    public User getGameStarter() {
+        return userList.get(0);
     }
 
     public void addUser(User user) {
