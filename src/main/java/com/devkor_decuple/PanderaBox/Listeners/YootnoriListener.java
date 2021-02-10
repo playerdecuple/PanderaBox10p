@@ -24,7 +24,240 @@ public class YootnoriListener extends ListenerAdapter {
         TextChannel c = ev.getChannel();
         String[] args = msg.split(" ");
 
-        Message yootInfoMsg;
+        Message yootInfoMsg = null;
+
+        if (PanderaBox.manager1.yootnoriGameExists(ev.getChannel().getId())) {
+            Yootnori yoot = PanderaBox.manager1.findYootnoriGame(c.getId());
+            yoot.c = c;
+
+            if (yoot.nowPlaying) {
+
+                boolean isOurTurn = yoot.nowTurn_team ? yoot.blueTeam.contains(sender) : yoot.redTeam.contains(sender);
+
+                if (yoot.getUserList().contains(sender)) {
+                    if (eq(args[0], "/윷")) {
+                        if (args.length > 1) {
+                            if (eq(args[1], "던지기")) {
+
+                                int nowTurn = yoot.nowTurn;
+                                boolean canThrowYoot = yoot.canCountOfThrowYoot > 0;
+
+                                if (yoot.turnOrder.get(nowTurn).getId().equals(sender.getId())) {
+                                    if (!canThrowYoot) {
+                                        c.sendMessage("던질 기회가 없습니다. `/윷 판` 명령어를 이용하여 말을 움직여 주세요.").queue();
+                                        return;
+                                    }
+
+                                    int move = yoot.throwYoot();
+                                    c.sendMessage(yoot.getYootEmote(ev.getJDA()).equals("") ? "\u200B" : yoot.getYootEmote(ev.getJDA())).queue();
+                                    c.sendMessage("윷을 던졌더니, **" + yoot.getYootName(move) + "**(이)가 나왔습니다!").queue();
+                                    c.sendMessage(yoot.canCountOfThrowYoot + "번 더 던질 수 있습니다.").queue();
+                                } else {
+                                    c.sendMessage("당신은 지금 윷을 던질 수 없습니다!").queue();
+                                }
+
+                            }
+                        }
+
+                        if (eq(args[1], "판")) {
+
+                            c.sendMessage(yoot.showMalBoard()).queue();
+                            c.sendMessage("'**뒷도**/**도**/**개**/**걸**/**윷**/**모** [말 번호]' 명령어로 말을 움직일 수 있습니다.").queue();
+
+                            StringBuilder sb = new StringBuilder();
+
+                            for (int i = 0; i < yoot.moves.size(); i++) {
+                                sb.append(yoot.getYootName(yoot.moves.get(i))).append(i != yoot.moves.size() - 1 ? " - " : "");
+                            }
+
+                            c.sendMessage("윷의 현재 결과 : [**" + sb.toString() + "**]").queue();
+
+                        }
+                    }
+
+                    if (eq(args[0], "도")) {
+
+                        if (args.length == 2) {
+
+                            if (isOurTurn) {
+                                if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(1) : yoot.moves.get(0) == 1) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1])] != -2 : yoot.redMal[Integer.parseInt(args[1])] != -2) {
+                                        yoot.move(1, Integer.parseInt(args[1]));
+                                        c.sendMessage(yoot.showMalBoard()).queue();
+
+                                        if (yoot.canCountOfThrowYoot <= 0 && yoot.moves.size() <= 0) {
+                                            yoot.nextTurn();
+                                            c.sendMessage("이제 " + yoot.turnOrder.get(yoot.nowTurn).getAsMention() + "님이 던질 차례입니다!").queue();
+                                        }
+                                    } else {
+                                        EmbedBuilder eb = new EmbedBuilder();
+                                        eb.setTitle("해당 말은 이미 도착했기 때문에 움직일 수 없습니다!");
+                                        eb.setColor(Color.yellow);
+
+                                        c.sendMessage(eb.build()).queue();
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    if (eq(args[0], "개")) {
+
+                        if (args.length == 2) {
+
+                            if (isOurTurn) {
+                                if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(2) : yoot.moves.get(0) == 2) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1])] != -2 : yoot.redMal[Integer.parseInt(args[1])] != -2) {
+                                        yoot.move(2, Integer.parseInt(args[1]));
+                                        c.sendMessage(yoot.showMalBoard()).queue();
+
+                                        if (yoot.canCountOfThrowYoot <= 0 && yoot.moves.size() <= 0) {
+                                            yoot.nextTurn();
+                                            c.sendMessage("이제 " + yoot.turnOrder.get(yoot.nowTurn).getAsMention() + "님이 던질 차례입니다!").queue();
+                                        }
+                                    } else {
+                                        EmbedBuilder eb = new EmbedBuilder();
+                                        eb.setTitle("해당 말은 이미 도착했기 때문에 움직일 수 없습니다!");
+                                        eb.setColor(Color.yellow);
+
+                                        c.sendMessage(eb.build()).queue();
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    if (eq(args[0], "걸")) {
+
+                        if (args.length == 2) {
+
+                            if (isOurTurn) {
+                                if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(3) : yoot.moves.get(0) == 3) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1])] != -2 : yoot.redMal[Integer.parseInt(args[1])] != -2) {
+                                        yoot.move(3, Integer.parseInt(args[1]));
+                                        c.sendMessage(yoot.showMalBoard()).queue();
+
+                                        if (yoot.canCountOfThrowYoot <= 0 && yoot.moves.size() <= 0) {
+                                            yoot.nextTurn();
+                                            c.sendMessage("이제 " + yoot.turnOrder.get(yoot.nowTurn).getAsMention() + "님이 던질 차례입니다!").queue();
+                                        }
+                                    } else {
+                                        EmbedBuilder eb = new EmbedBuilder();
+                                        eb.setTitle("해당 말은 이미 도착했기 때문에 움직일 수 없습니다!");
+                                        eb.setColor(Color.yellow);
+
+                                        c.sendMessage(eb.build()).queue();
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    if (eq(args[0], "윷")) {
+
+                        if (args.length == 2) {
+
+                            if (isOurTurn) {
+                                if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(4) : yoot.moves.get(0) == 4) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1])] != -2 : yoot.redMal[Integer.parseInt(args[1])] != -2) {
+                                        yoot.move(4, Integer.parseInt(args[1]));
+                                        c.sendMessage(yoot.showMalBoard()).queue();
+
+                                        if (yoot.canCountOfThrowYoot <= 0 && yoot.moves.size() <= 0) {
+                                            yoot.nextTurn();
+                                            c.sendMessage("이제 " + yoot.turnOrder.get(yoot.nowTurn).getAsMention() + "님이 던질 차례입니다!").queue();
+                                        }
+                                    } else {
+                                        EmbedBuilder eb = new EmbedBuilder();
+                                        eb.setTitle("해당 말은 이미 도착했기 때문에 움직일 수 없습니다!");
+                                        eb.setColor(Color.yellow);
+
+                                        c.sendMessage(eb.build()).queue();
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    if (eq(args[0], "모")) {
+
+                        if (args.length == 2) {
+
+                            if (isOurTurn) {
+                                if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(5) : yoot.moves.get(0) == 5) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1]) - 1] != -2 : yoot.redMal[Integer.parseInt(args[1]) - 1] != -2) {
+                                        yoot.move(5, Integer.parseInt(args[1]));
+                                        c.sendMessage(yoot.showMalBoard()).queue();
+
+                                        if (yoot.canCountOfThrowYoot <= 0 && yoot.moves.size() <= 0) {
+                                            yoot.nextTurn();
+                                            c.sendMessage("이제 " + yoot.turnOrder.get(yoot.nowTurn).getAsMention() + "님이 던질 차례입니다!").queue();
+                                        }
+                                    } else {
+                                        EmbedBuilder eb = new EmbedBuilder();
+                                        eb.setTitle("해당 말은 이미 도착했기 때문에 움직일 수 없습니다!");
+                                        eb.setColor(Color.yellow);
+
+                                        c.sendMessage(eb.build()).queue();
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    if (eq(args[0], "뒷도")) {
+
+                        if (args.length == 2) {
+
+                            if (isOurTurn) {
+                                if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(-1) : yoot.moves.get(0) == -1) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1])] != -2 : yoot.redMal[Integer.parseInt(args[1])] != -2) {
+                                        yoot.move(-1, Integer.parseInt(args[1]));
+                                        c.sendMessage(yoot.showMalBoard()).queue();
+
+                                        if (yoot.canCountOfThrowYoot <= 0 && yoot.moves.size() <= 0) {
+                                            yoot.nextTurn();
+                                            c.sendMessage("이제 " + yoot.turnOrder.get(yoot.nowTurn).getAsMention() + "님이 던질 차례입니다!").queue();
+                                        }
+                                    } else {
+                                        EmbedBuilder eb = new EmbedBuilder();
+                                        eb.setTitle("해당 말은 이미 도착했기 때문에 움직일 수 없습니다!");
+                                        eb.setColor(Color.yellow);
+
+                                        c.sendMessage(eb.build()).queue();
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    return;
+
+                }
+            }
+        }
+
+        if (eq(args[0], "/이모티콘")) {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < ev.getMessage().getEmotes().size(); i++) {
+                sb.append(ev.getMessage().getEmotes().get(i).getId()).append(" ");
+            }
+
+            c.sendMessage(sb.toString()).queue();
+        }
 
         if (eq(args[0], "/윷놀이", "/윷")) {
 
@@ -81,6 +314,24 @@ public class YootnoriListener extends ListenerAdapter {
                 eb.setColor(Color.orange);
 
                 yootInfoMsg = c.sendMessage(eb.build()).complete();
+
+            } else if (eq(args[1], "시작")) {
+
+                if (!PanderaBox.manager1.yootnoriGameExists(ev.getChannel().getId())) {
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb.setTitle("윷놀이 게임이 없네요..");
+                    eb.setDescription("`/윷놀이` 명령어로 윷놀이 게임을 생성해 주세요!");
+                    eb.setColor(Color.red);
+
+                    c.sendMessage(eb.build()).delay(10, TimeUnit.SECONDS).flatMap(Message::delete).queue();
+
+                    return;
+                }
+
+                if (yootInfoMsg != null) yootInfoMsg.delete().queue();
+
+                Yootnori yoot = PanderaBox.manager1.findYootnoriGame(c.getId());
+                yoot.gameStart(c);
 
             } else if (eq(args[1], "참가")) {
 
@@ -196,7 +447,7 @@ public class YootnoriListener extends ListenerAdapter {
 
     }
 
-    boolean eq(String value, String ... others) {
+    boolean eq(String value, String... others) {
         for (String other : others) {
             if (other.equalsIgnoreCase(value)) return true;
         }
