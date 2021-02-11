@@ -51,7 +51,7 @@ public class YootnoriListener extends ListenerAdapter {
                                     int move = yoot.throwYoot();
                                     c.sendMessage(yoot.getYootEmote(ev.getJDA()).equals("") ? "\u200B" : yoot.getYootEmote(ev.getJDA())).queue();
                                     c.sendMessage("윷을 던졌더니, **" + yoot.getYootName(move) + "**(이)가 나왔습니다!").queue();
-                                    c.sendMessage(yoot.canCountOfThrowYoot + "번 더 던질 수 있습니다.").queue();
+                                    c.sendMessage(move != 0 ? yoot.canCountOfThrowYoot + "번 더 던질 수 있습니다." : "**낙**이므로 던질 수 없습니다. " + yoot.turnOrder.get(yoot.nowTurn).getAsMention() + "님이 던질 차례가 되었습니다.").queue();
                                 } else {
                                     c.sendMessage("당신은 지금 윷을 던질 수 없습니다!").queue();
                                 }
@@ -81,7 +81,7 @@ public class YootnoriListener extends ListenerAdapter {
 
                             if (isOurTurn) {
                                 if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(1) : yoot.moves.get(0) == 1) {
-                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1])] != -2 : yoot.redMal[Integer.parseInt(args[1])] != -2) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1]) - 1] != -2 : yoot.redMal[Integer.parseInt(args[1]) - 1] != -2) {
                                         yoot.move(1, Integer.parseInt(args[1]));
                                         c.sendMessage(yoot.showMalBoard()).queue();
 
@@ -109,7 +109,7 @@ public class YootnoriListener extends ListenerAdapter {
 
                             if (isOurTurn) {
                                 if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(2) : yoot.moves.get(0) == 2) {
-                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1])] != -2 : yoot.redMal[Integer.parseInt(args[1])] != -2) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1]) - 1] != -2 : yoot.redMal[Integer.parseInt(args[1]) - 1] != -2) {
                                         yoot.move(2, Integer.parseInt(args[1]));
                                         c.sendMessage(yoot.showMalBoard()).queue();
 
@@ -137,7 +137,7 @@ public class YootnoriListener extends ListenerAdapter {
 
                             if (isOurTurn) {
                                 if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(3) : yoot.moves.get(0) == 3) {
-                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1])] != -2 : yoot.redMal[Integer.parseInt(args[1])] != -2) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1]) - 1] != -2 : yoot.redMal[Integer.parseInt(args[1]) - 1] != -2) {
                                         yoot.move(3, Integer.parseInt(args[1]));
                                         c.sendMessage(yoot.showMalBoard()).queue();
 
@@ -165,7 +165,7 @@ public class YootnoriListener extends ListenerAdapter {
 
                             if (isOurTurn) {
                                 if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(4) : yoot.moves.get(0) == 4) {
-                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1])] != -2 : yoot.redMal[Integer.parseInt(args[1])] != -2) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1]) - 1] != -2 : yoot.redMal[Integer.parseInt(args[1]) - 1] != -2) {
                                         yoot.move(4, Integer.parseInt(args[1]));
                                         c.sendMessage(yoot.showMalBoard()).queue();
 
@@ -221,7 +221,7 @@ public class YootnoriListener extends ListenerAdapter {
 
                             if (isOurTurn) {
                                 if (yoot.canChangeOrderOfYoot ? yoot.moves.contains(-1) : yoot.moves.get(0) == -1) {
-                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1])] != -2 : yoot.redMal[Integer.parseInt(args[1])] != -2) {
+                                    if (yoot.nowTurn_team ? yoot.blueMal[Integer.parseInt(args[1]) - 1] != -2 : yoot.redMal[Integer.parseInt(args[1]) - 1] != -2) {
                                         yoot.move(-1, Integer.parseInt(args[1]));
                                         c.sendMessage(yoot.showMalBoard()).queue();
 

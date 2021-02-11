@@ -38,11 +38,13 @@ public class Yootnori {
     public int nowTurn = 0;
 
     public boolean canChangeOrderOfYoot = true;
+    /*
     public int trapDifficulty = 0;
     public boolean allowFreeGul = false;
     public boolean allowBackDoBeforeStart = true;
     public boolean hardArrive = false;
     public int unluckyBuff = 3;
+     */
 
     public boolean nowPlaying = false;
     public int canCountOfThrowYoot = 1;
@@ -66,10 +68,6 @@ public class Yootnori {
 
     public List<User> getUserList() {
         return userList;
-    }
-
-    public List<Integer> getYoots() {
-        return yoots;
     }
 
     public User getGameStarter() {
@@ -144,8 +142,7 @@ public class Yootnori {
 
     public void gameStart(TextChannel c) {
 
-        List<User> users = new ArrayList<>();
-        users.addAll(userList);
+        List<User> users = new ArrayList<>(userList);
         Collections.shuffle(users);
 
         for (int i = 0; i < users.size(); i++) {
@@ -225,6 +222,7 @@ public class Yootnori {
         if (out > 95) {
             move = 0; // Nack
             nextTurn();
+            return move;
         }
 
         moves.add(move);
@@ -248,7 +246,6 @@ public class Yootnori {
                 for (int j = 0; j < blueMal.length; j++) {
                     if (j != id && (blueMal[j] >= 0 && blueMal[j] == blueMal[id])) {
                         carried.add(j);
-                        break;
                     }
                 }
 
@@ -280,15 +277,17 @@ public class Yootnori {
                     blueMal[id] -= 4;
                 }
 
-                log("Checkpoint E");
-
-                if (i + value > 26) {
-                    blueMal[id]--;
+                if ((i == 20 && value == 5) || (i == 21 && value == 4) || (i == 23 && value == 2) || (i == 24 && value == 1)) {
+                    blueMal[id] = 15;
                 }
 
-                log("Checkpoint F");
+                log("Checkpoint E");
 
                 blueMal[id] += value;
+
+                if ((i == 10 || (i >= 25 && i < 27)) && blueMal[id] > 27) {
+                    blueMal[id]--;
+                }
                 
                 if (blueMal[id] == 30) {
                     blueMal[id] = 0;
@@ -301,21 +300,24 @@ public class Yootnori {
                 System.out.println("WHERE NOW MOVED MAL IS : " + blueMal[id]);
 
                 if (blueMal[id] >= 0 && !slots[blueMal[id]].equals(":orange_circle:") && !slots[blueMal[id]].equals(":white_circle:")) {
+                    boolean catched = false;
                     for (int j = 0; j < blueMal.length; j++) {
-                        if (blueMal[id] == redMal[j]) {
+                        if (j != id && blueMal[id] == redMal[j]) {
                             redMal[j] = -1;
-                            c.sendMessage("상대 편의 말을 하나 잡았습니다! 윷을 한 번 더 던질 수 있습니다!").queue();
-                            canCountOfThrowYoot++;
-
-                            break;
+                            catched = true;
                         }
                     }
 
-                    log("Checkpoint H");
+                    log("Checkpoint C");
 
-                    for (Integer integer : carried) {
-                        blueMal[integer] = blueMal[id];
+                    if (catched) {
+                        canCountOfThrowYoot++;
+                        c.sendMessage("상대 편의 말을 잡았습니다! 윷을 한 번 더 던질 수 있습니다!").queue();
                     }
+                }
+
+                for (Integer integer : carried) {
+                    blueMal[integer] = blueMal[id];
                 }
 
                 log("Checkpoint I");
@@ -336,18 +338,20 @@ public class Yootnori {
                 log("Checkpoint B");
 
                 if (blueMal[id] >= 0 && !slots[blueMal[id]].equals(":orange_circle:") && !slots[blueMal[id]].equals(":white_circle:")) {
-                    boolean v = false;
+                    boolean catched = false;
                     for (int j = 0; j < blueMal.length; j++) {
                         if (j != id && blueMal[id] == redMal[j]) {
                             redMal[j] = -1;
-                            c.sendMessage("상대 편의 말을 하나 잡았습니다! 윷을 한 번 더 던질 수 있습니다!").queue();
-                            v = true;
+                            catched = true;
                         }
                     }
 
                     log("Checkpoint C");
 
-                    if (v) canCountOfThrowYoot++;
+                    if (catched) {
+                        canCountOfThrowYoot++;
+                        c.sendMessage("상대 편의 말을 잡았습니다! 윷을 한 번 더 던질 수 있습니다!").queue();
+                    }
                 }
 
                 if (blueMal[id] >= 0) {
@@ -360,6 +364,8 @@ public class Yootnori {
         } else {
             if (redMal[id] != -1) {
 
+                log("Checkpoint A");
+
                 int i = redMal[id];
                 moves.remove(Integer.valueOf(value));
 
@@ -368,9 +374,12 @@ public class Yootnori {
                 for (int j = 0; j < redMal.length; j++) {
                     if (j != id && (redMal[j] >= 0 && redMal[j] == redMal[id])) {
                         carried.add(j);
-                        break;
                     }
                 }
+
+                log(carried);
+
+                log("Checkpoint B");
 
                 if (i == 0 || i == 5 || i == 10 || i == 15 || i == 22) {
                     slots[i] = ":orange_circle:";
@@ -384,6 +393,8 @@ public class Yootnori {
                     redMal[id] += 4;
                 }
 
+                log("Checkpoint D");
+
                 if (i == 10 && value == 3) {
                     redMal[id] += 8;
                 } else if (i == 25 && value == 2) {
@@ -392,69 +403,82 @@ public class Yootnori {
                     redMal[id] -= 4;
                 }
 
-                if (i + value > 26) {
+                log("Checkpoint E");
+
+                redMal[id] += value;
+
+                if ((i == 10 || (i >= 25 && i < 27)) && redMal[id] > 27) {
                     redMal[id]--;
                 }
 
-                if (redMal[id] == 0) {
+                if (redMal[id] == 30) {
+                    redMal[id] = 0;
+                } else if (redMal[id] > 30) {
                     redMal[id] = -2;
-                } else {
-                    redMal[id] += value;
                 }
 
-                if (redMal[id] == 29) {
-                    redMal[id] = 0;
-                } else if (redMal[id] > 29) {
-                    redMal[id] = -2;
-                }
+                log("Checkpoint G");
 
                 System.out.println("WHERE NOW MOVED MAL IS : " + redMal[id]);
 
-                if (redMal[id] >= 0) {
-                    slots[redMal[id]] = getMalEmote(id);
-                }
-
                 if (redMal[id] >= 0 && !slots[redMal[id]].equals(":orange_circle:") && !slots[redMal[id]].equals(":white_circle:")) {
-                    boolean v = false;
-
-                    for (int j = 0; j < redMal.length; j++) {
+                    boolean catched = false;
+                    for (int j = 0; j < blueMal.length; j++) {
                         if (redMal[id] == blueMal[j]) {
                             blueMal[j] = -1;
-                            c.sendMessage("상대 편의 말을 하나 잡았습니다! 윷을 한 번 더 던질 수 있습니다!").queue();
-                            v = true;
+                            catched = true;
                         }
                     }
 
-                    if (v) canCountOfThrowYoot++;
+                    if (catched) {
+                        canCountOfThrowYoot++;
+                        c.sendMessage("상대 편의 말을 잡았습니다! 윷을 한 번 더 던질 수 있습니다!").queue();
+                    }
+
+                    log("Checkpoint H");
                 }
 
                 for (Integer integer : carried) {
                     redMal[integer] = redMal[id];
                 }
 
+                log("Checkpoint I");
+
+                if (redMal[id] >= 0) {
+                    slots[redMal[id]] = getMalEmote(id);
+                }
+
+                log("Checkpoint J");
             } else {
+
+                log("Checkpoint A");
+
                 redMal[id] += value + 1;
                 moves.remove(Integer.valueOf(value));
                 System.out.println("WHERE NOW MOVED MAL IS : " + redMal[id]);
 
+                log("Checkpoint B");
+
                 if (redMal[id] >= 0 && !slots[redMal[id]].equals(":orange_circle:") && !slots[redMal[id]].equals(":white_circle:")) {
-                    boolean v = false;
-
-                    for (int j = 0; j < redMal.length; j++) {
-
+                    boolean catched = false;
+                    for (int j = 0; j < blueMal.length; j++) {
                         if (redMal[id] == blueMal[j]) {
                             blueMal[j] = -1;
-                            c.sendMessage("상대 편의 말을 하나 잡았습니다! 윷을 한 번 더 던질 수 있습니다!").queue();
-                            v = true;
+                            catched = true;
                         }
                     }
 
-                    if (v) canCountOfThrowYoot++;
+                    if (catched) {
+                        canCountOfThrowYoot++;
+                        c.sendMessage("상대 편의 말을 잡았습니다! 윷을 한 번 더 던질 수 있습니다!").queue();
+                    }
                 }
 
                 if (redMal[id] >= 0) {
                     slots[redMal[id]] = getMalEmote(id);
                 }
+
+                log("Checkpoint D");
             }
         }
 
