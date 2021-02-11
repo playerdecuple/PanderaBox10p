@@ -1,5 +1,6 @@
 package com.devkor_decuple.PanderaBox.Core.Games;
 
+import com.devkor_decuple.PanderaBox.PanderaBox;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Emote;
@@ -7,10 +8,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class Yootnori {
 
@@ -23,6 +22,12 @@ public class Yootnori {
 
     public int[] blueMal = new int[4];
     public int[] redMal = new int[4];
+
+    public int blueScore = 0;
+    public int redScore = 0;
+
+    public int blueSurrender = 0;
+    public int redSurrender = 0;
 
     public List<User> turnOrder = new ArrayList<>();
 
@@ -187,6 +192,54 @@ public class Yootnori {
 
     }
 
+    public void gameOver() {
+
+        EmbedBuilder eb = new EmbedBuilder();
+
+        eb.setTitle("승리!");
+        eb.setColor(blueScore > redScore ? Color.blue : Color.red);
+
+        StringBuilder sb = new StringBuilder();
+
+        for (User winner : blueScore > redScore ? blueTeam : redTeam) {
+            sb.append(winner.getAsMention()).append("\n");
+        }
+
+        eb.addField("승자!", sb.toString(), false);
+        c.sendMessage(eb.build()).queue();
+
+        nowPlaying = false;
+        PanderaBox.manager1.removeYootnoriGame(channelId);
+
+    }
+
+    public void surrender(User player) {
+
+        boolean isBlueTeam = blueTeam.contains(player);
+        if (isBlueTeam) blueSurrender++; else redSurrender++;
+
+        boolean canSurrender = false;
+
+        if (redScore - blueScore >= 2 || blueScore - redScore >= 2) canSurrender = true;
+        if (!canSurrender) {
+            c.sendMessage("상대편과 점수가 2점 이상 차이나야 항복할 수 있습니다.").queue();
+            return;
+        }
+
+        c.sendMessage(player.getAsMention() + "님이 " + (isBlueTeam ? "청편" : "홍편") + "의 항복에 찬성표를 던졌습니다. 현재 " + (isBlueTeam ? "청편에 대한 항복 찬성표는 " + blueSurrender + "개입니다." : "홍편에 대한 항복 찬성표는 " + redSurrender + "개입니다.") + "`/ㅈㅈ`로 항복에 찬성할 수 있습니다.").queue();
+
+        if (blueSurrender >= 2) {
+            blueScore = 0;
+            gameOver();
+        }
+
+        if (redSurrender >= 2) {
+            redScore = 0;
+            gameOver();
+        }
+
+    }
+
     public int throwYoot() {
 
         yoots = new ArrayList<>();
@@ -232,6 +285,8 @@ public class Yootnori {
 
     public void move(int value, int id) {
         id--;
+
+        boolean arrived = false;
 
         if (nowTurn_team) {
             if (blueMal[id] != -1) {
@@ -285,14 +340,28 @@ public class Yootnori {
 
                 blueMal[id] += value;
 
+                if ((i >= 20 && i <= 24 && i != 22) && blueMal[id] > 24) {
+                    blueMal[id] -= 10;
+                }
+
                 if ((i == 10 || (i >= 25 && i < 27)) && blueMal[id] > 27) {
                     blueMal[id]--;
                 }
-                
-                if (blueMal[id] == 30) {
+
+                if ((i >= 15 && i <= 19) && blueMal[id] == 20) {
                     blueMal[id] = 0;
-                } else if (blueMal[id] > 30) {
+                }
+
+                if (blueMal[id] == 29) {
+                    blueMal[id] = 0;
+                } else if (blueMal[id] > 29) {
                     blueMal[id] = -2;
+                    arrived = true;
+                }
+
+                if (i == 0 && value > 0) {
+                    blueMal[id] = -2;
+                    arrived = true;
                 }
 
                 log("Checkpoint G");
@@ -302,7 +371,7 @@ public class Yootnori {
                 if (blueMal[id] >= 0 && !slots[blueMal[id]].equals(":orange_circle:") && !slots[blueMal[id]].equals(":white_circle:")) {
                     boolean catched = false;
                     for (int j = 0; j < blueMal.length; j++) {
-                        if (j != id && blueMal[id] == redMal[j]) {
+                        if (blueMal[id] == redMal[j]) {
                             redMal[j] = -1;
                             catched = true;
                         }
@@ -316,8 +385,20 @@ public class Yootnori {
                     }
                 }
 
+                StringBuilder sb = new StringBuilder(getMalEmote(id + 4) + " ");
+
                 for (Integer integer : carried) {
                     blueMal[integer] = blueMal[id];
+
+                    if (arrived) {
+                        sb.append(getMalEmote(integer + 4)).append(" ");
+                        blueScore++;
+                    }
+                }
+
+                if (arrived) {
+                    c.sendMessage("' " + sb.toString() + "' 말(들)이 도착했습니다!").queue();
+                    blueScore++;
                 }
 
                 log("Checkpoint I");
@@ -340,7 +421,7 @@ public class Yootnori {
                 if (blueMal[id] >= 0 && !slots[blueMal[id]].equals(":orange_circle:") && !slots[blueMal[id]].equals(":white_circle:")) {
                     boolean catched = false;
                     for (int j = 0; j < blueMal.length; j++) {
-                        if (j != id && blueMal[id] == redMal[j]) {
+                        if (blueMal[id] == redMal[j]) {
                             redMal[j] = -1;
                             catched = true;
                         }
@@ -407,14 +488,28 @@ public class Yootnori {
 
                 redMal[id] += value;
 
+                if ((i >= 20 && i <= 24 && i != 22) && redMal[id] > 24) {
+                    redMal[id] -= 10;
+                }
+
                 if ((i == 10 || (i >= 25 && i < 27)) && redMal[id] > 27) {
                     redMal[id]--;
                 }
 
-                if (redMal[id] == 30) {
+                if ((i >= 15 && i <= 19) && redMal[id] == 20) {
                     redMal[id] = 0;
-                } else if (redMal[id] > 30) {
+                }
+
+                if (i == 0 && value > 0) {
                     redMal[id] = -2;
+                    arrived = true;
+                }
+
+                if (redMal[id] == 29) {
+                    redMal[id] = 0;
+                } else if (redMal[id] > 29) {
+                    redMal[id] = -2;
+                    arrived = true;
                 }
 
                 log("Checkpoint G");
@@ -438,8 +533,20 @@ public class Yootnori {
                     log("Checkpoint H");
                 }
 
+                StringBuilder sb = new StringBuilder(getMalEmote(id) + " ");
+
                 for (Integer integer : carried) {
                     redMal[integer] = redMal[id];
+
+                    if (arrived) {
+                        sb.append(getMalEmote(integer)).append(" ");
+                        redScore++;
+                    }
+                }
+
+                if (arrived) {
+                    c.sendMessage("' " + sb.toString() + "' 말(들)이 도착했습니다!").queue();
+                    redScore++;
                 }
 
                 log("Checkpoint I");
@@ -482,6 +589,10 @@ public class Yootnori {
             }
         }
 
+        if (blueScore == 4 || redScore == 4) {
+            gameOver();
+        }
+
     }
 
     public void nextTurn() {
@@ -491,6 +602,32 @@ public class Yootnori {
         canCountOfThrowYoot++;
         yoots = new ArrayList<>();
         moves = new ArrayList<>();
+    }
+
+    public String getCarryingTarget(boolean team) {
+        StringBuilder sb = new StringBuilder("[ ");
+        if (!team) {
+            for (int i = 0; i < 4; i++) {
+                sb.append(getMalEmote(i)).append(" ");
+                for (int j = 0; j < redMal.length; j++) {
+                    if (j != i && (redMal[j] >= 0 && redMal[j] == redMal[i])) {
+                        sb.append(getMalEmote(j)).append(" ");
+                    }
+                }
+                sb.append(i != 3 ? "] [ " : "]");
+            }
+        } else {
+            for (int i = 0; i < 4; i++) {
+                sb.append(getMalEmote(i + 4)).append(" ");
+                for (int j = 0; j < blueMal.length; j++) {
+                    if (j != i && (blueMal[j] >= 0 && blueMal[j] == blueMal[i])) {
+                        sb.append(getMalEmote(j + 4)).append(" ");
+                    }
+                }
+                sb.append(i != 3 ? "] [ " : "]");
+            }
+        }
+        return sb.toString();
     }
 
     public String getMalEmote(int malNumber) {

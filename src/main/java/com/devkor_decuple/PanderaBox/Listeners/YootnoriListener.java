@@ -35,6 +35,12 @@ public class YootnoriListener extends ListenerAdapter {
                 boolean isOurTurn = yoot.nowTurn_team ? yoot.blueTeam.contains(sender) : yoot.redTeam.contains(sender);
 
                 if (yoot.getUserList().contains(sender)) {
+                    if (eq(args[0], "/ㅈㅈ", "/항복", "/서렌", "/ㅅㄹ", "15ㄱㄱ", "/기권")) {
+                        if (args.length == 1) {
+                            yoot.surrender(sender);
+                        }
+                    }
+
                     if (eq(args[0], "/윷")) {
                         if (args.length > 1) {
                             if (eq(args[1], "던지기")) {
@@ -44,7 +50,7 @@ public class YootnoriListener extends ListenerAdapter {
 
                                 if (yoot.turnOrder.get(nowTurn).getId().equals(sender.getId())) {
                                     if (!canThrowYoot) {
-                                        c.sendMessage("던질 기회가 없습니다. `/윷 판` 명령어를 이용하여 말을 움직여 주세요.").queue();
+                                        c.sendMessage("던질 기회가 없습니다. `/윷 판` 명령어를 입력하고 해당 내용을 참고하여 말을 움직여 주세요!").queue();
                                         return;
                                     }
 
@@ -53,7 +59,7 @@ public class YootnoriListener extends ListenerAdapter {
                                     c.sendMessage("윷을 던졌더니, **" + yoot.getYootName(move) + "**(이)가 나왔습니다!").queue();
                                     c.sendMessage(move != 0 ? yoot.canCountOfThrowYoot + "번 더 던질 수 있습니다." : "**낙**이므로 던질 수 없습니다. " + yoot.turnOrder.get(yoot.nowTurn).getAsMention() + "님이 던질 차례가 되었습니다.").queue();
                                 } else {
-                                    c.sendMessage("당신은 지금 윷을 던질 수 없습니다!").queue();
+                                    c.sendMessage("당신은 지금 윷을 던질 수 없습니다! `/윷 판` 명령어를 입력하고 해당 내용을 참고하여 말을 움직여 주세요!").queue();
                                 }
 
                             }
@@ -70,7 +76,10 @@ public class YootnoriListener extends ListenerAdapter {
                                 sb.append(yoot.getYootName(yoot.moves.get(i))).append(i != yoot.moves.size() - 1 ? " - " : "");
                             }
 
-                            c.sendMessage("윷의 현재 결과 : [**" + sb.toString() + "**]").queue();
+                            c.sendMessage( "\n\n\n" +
+                                    "현재 **청편** 업혀있는 말 묶음 : " + yoot.getCarryingTarget(true) + "\n" +
+                                    "현재 **홍편** 업혀있는 말 묶음 : " + yoot.getCarryingTarget(false)).queue();
+                            c.sendMessage("\n\n윷의 현재 결과 : [**" + sb.toString() + "**]").queue();
 
                         }
                     }
