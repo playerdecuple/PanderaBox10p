@@ -352,6 +352,10 @@ public class Yootnori {
                     blueMal[id] = 0;
                 }
 
+                if ((i >= 15 && i <= 19) && blueMal[id] > 20) {
+                    blueMal[id] = -2;
+                }
+
                 if (blueMal[id] == 29) {
                     blueMal[id] = 0;
                 } else if (blueMal[id] > 29) {
@@ -498,6 +502,10 @@ public class Yootnori {
 
                 if ((i >= 15 && i <= 19) && redMal[id] == 20) {
                     redMal[id] = 0;
+                }
+
+                if ((i >= 15 && i <= 19) && blueMal[id] > 20) {
+                    blueMal[id] = -2;
                 }
 
                 if (i == 0 && value > 0) {
