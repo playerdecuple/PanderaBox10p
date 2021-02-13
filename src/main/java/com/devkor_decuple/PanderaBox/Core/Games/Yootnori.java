@@ -39,7 +39,7 @@ public class Yootnori {
      * nowTurn_team == true means 'now turn is blue team'
      * nowTurn_team == false means 'now turn is red team'
      */
-    
+
     public int nowTurn = 0;
 
     public boolean canChangeOrderOfYoot = true;
@@ -93,13 +93,13 @@ public class Yootnori {
      * Yootnori board introduce
      *
      * Q 8  o 7  o 6  o 5  Q 4
-     * 
+     *
      * o 9  o 21      o 16 o 3
      *         o 22o 17
      * o 10      Q 18      o 2
      *         o 19o 23
      * o 11 o 20      o 24 o 1
-     * 
+     *
      * Q 12 o 13 o 14 o 15 Q 0
      */
 
@@ -121,7 +121,7 @@ public class Yootnori {
 
     public String showMalBoard() {
 
-        return  slots[10] + "                  " + slots[9] + "                 " + slots[8] + "                 " + slots[7] + "                 " + slots[6] + "                 " + slots[5] + "\n" +
+        return slots[10] + "                  " + slots[9] + "                 " + slots[8] + "                 " + slots[7] + "                 " + slots[6] + "                 " + slots[5] + "\n" +
                 "\n" +
                 "\n" +
                 "                 " + slots[25] + "                                                                            " + slots[20] + "\n" +
@@ -216,7 +216,8 @@ public class Yootnori {
     public void surrender(User player) {
 
         boolean isBlueTeam = blueTeam.contains(player);
-        if (isBlueTeam) blueSurrender++; else redSurrender++;
+        if (isBlueTeam) blueSurrender++;
+        else redSurrender++;
 
         boolean canSurrender = false;
 
@@ -323,7 +324,7 @@ public class Yootnori {
                 }
 
                 log("Checkpoint D");
-                
+
                 if (i == 10 && value == 3) {
                     blueMal[id] += 8;
                 } else if (i == 25 && value == 2) {
@@ -465,21 +466,6 @@ public class Yootnori {
                 log(carried);
 
                 log("Checkpoint B");
-
-                if (i == 0 || i == 5 || i == 10 || i == 15 || i == 22) {
-                    slots[i] = ":orange_circle:";
-                } else {
-                    slots[i] = ":white_circle:";
-                }
-
-                if (i == 5 || i == 10) {
-                    redMal[id] += 14;
-                } else if (i == 22) {
-                    redMal[id] += 4;
-                }
-
-                log("Checkpoint D");
-
                 if (i == 10 && value == 3) {
                     redMal[id] += 8;
                 } else if (i == 25 && value == 2) {
@@ -600,7 +586,6 @@ public class Yootnori {
         if (blueScore == 4 || redScore == 4) {
             gameOver();
         }
-
     }
 
     public void nextTurn() {
