@@ -333,10 +333,6 @@ public class Yootnori {
                     blueMal[id] -= 4;
                 }
 
-                if ((i == 20 && value == 5) || (i == 21 && value == 4) || (i == 23 && value == 2) || (i == 24 && value == 1)) {
-                    blueMal[id] = 15;
-                }
-
                 log("Checkpoint E");
 
                 blueMal[id] += value;
@@ -466,6 +462,23 @@ public class Yootnori {
                 log(carried);
 
                 log("Checkpoint B");
+
+                if (i == 0 || i == 5 || i == 10 || i == 15 || i == 22) {
+                    slots[i] = ":orange_circle:";
+                } else {
+                    slots[i] = ":white_circle:";
+                }
+
+                log("Checkpoint C");
+
+                if (i == 5 || i == 10) {
+                    redMal[id] += 14;
+                } else if (i == 22) {
+                    redMal[id] += 4;
+                }
+
+                log("Checkpoint D");
+
                 if (i == 10 && value == 3) {
                     redMal[id] += 8;
                 } else if (i == 25 && value == 2) {
@@ -490,18 +503,18 @@ public class Yootnori {
                     redMal[id] = 0;
                 }
 
-                if ((i >= 15 && i <= 19) && blueMal[id] > 20) {
-                    blueMal[id] = -2;
-                }
-
-                if (i == 0 && value > 0) {
+                if ((i >= 15 && i <= 19) && redMal[id] > 20) {
                     redMal[id] = -2;
-                    arrived = true;
                 }
 
                 if (redMal[id] == 29) {
                     redMal[id] = 0;
                 } else if (redMal[id] > 29) {
+                    redMal[id] = -2;
+                    arrived = true;
+                }
+
+                if (i == 0 && value > 0) {
                     redMal[id] = -2;
                     arrived = true;
                 }
@@ -512,28 +525,28 @@ public class Yootnori {
 
                 if (redMal[id] >= 0 && !slots[redMal[id]].equals(":orange_circle:") && !slots[redMal[id]].equals(":white_circle:")) {
                     boolean catched = false;
-                    for (int j = 0; j < blueMal.length; j++) {
+                    for (int j = 0; j < redMal.length; j++) {
                         if (redMal[id] == blueMal[j]) {
                             blueMal[j] = -1;
                             catched = true;
                         }
                     }
 
+                    log("Checkpoint C");
+
                     if (catched) {
                         canCountOfThrowYoot++;
                         c.sendMessage("상대 편의 말을 잡았습니다! 윷을 한 번 더 던질 수 있습니다!").queue();
                     }
-
-                    log("Checkpoint H");
                 }
 
-                StringBuilder sb = new StringBuilder(getMalEmote(id) + " ");
+                StringBuilder sb = new StringBuilder(getMalEmote(id + 4) + " ");
 
                 for (Integer integer : carried) {
                     redMal[integer] = redMal[id];
 
                     if (arrived) {
-                        sb.append(getMalEmote(integer)).append(" ");
+                        sb.append(getMalEmote(integer + 4)).append(" ");
                         redScore++;
                     }
                 }
